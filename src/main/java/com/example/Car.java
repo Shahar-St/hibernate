@@ -22,9 +22,12 @@ public class Car {
 
     //GROUP C'tors
     public Car(String licensePlate, double price, int year) {
+        this();
         this.licensePlate = licensePlate;
         this.price = price;
         this.year = year;
+    }
+    public Car(){
         garageList = new ArrayList<>();
     }
 

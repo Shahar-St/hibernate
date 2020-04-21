@@ -20,10 +20,13 @@ public class Person {
 
     //GROUP C'tors
     public Person(String firstName, String lastName, int password, String emailAddress) {
+        this();
         this.firstName = firstName;
         this.lastName = lastName;
         this.password = password;
         this.emailAddress = emailAddress;
+    }
+    public Person(){
         this.carList = new ArrayList<>();
         this.garageList = new ArrayList<>();
     }

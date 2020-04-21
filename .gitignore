@@ -1,2 +1,4 @@
 # Project exclude paths
 /target/
+/hello_hibernate.iml
+/.idea/
