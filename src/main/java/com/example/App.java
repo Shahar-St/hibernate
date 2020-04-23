@@ -2,6 +2,7 @@ package com.example;
 
 import java.util.List;
 import java.util.Random;
+import java.util.logging.Level;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -16,9 +17,9 @@ import org.hibernate.service.ServiceRegistry;
 public class App {
 
     private static final int NUM_OF_PERSONS = 5;
-    private static final int NUM_OF_CARS = 10;
+    private static final int NUM_OF_CARS = 5;
     private static final int NUM_OF_GARAGES = 2;
-    private static final int NUM_OF_IMAGES = 10;
+    private static final int NUM_OF_IMAGES = 5;
     private static Session session;
 
     public static void main(String[] args) {
@@ -27,11 +28,11 @@ public class App {
             SessionFactory sessionFactory = getSessionFactory();
             session = sessionFactory.openSession();
             session.beginTransaction();
-//            generateCars();
-//            generatePersons();
-//            generateGarages();
-//            generateImages();
-//            connectEntities();
+            generateCars();
+            generatePersons();
+            generateGarages();
+            generateImages();
+            connectEntities();
             printAllGarages();
             printAllCars();
         }
@@ -49,18 +50,11 @@ public class App {
             session.close();
         }
     }
-    private static void printAllGarages() {
-        List<Garage> garages = getAllGarages();
-        for (Garage garage : garages)
-            System.out.println(garage);
-
-
-    }
-
 
     private static SessionFactory getSessionFactory() throws HibernateException {
+
+        java.util.logging.Logger.getLogger("org.hibernate").setLevel(Level.OFF);
         Configuration configuration = new Configuration();
-        // Add ALL of your entities here. You can also try adding a whole package.
         configuration.addAnnotatedClass(Car.class);
         configuration.addAnnotatedClass(Person.class);
         configuration.addAnnotatedClass(Garage.class);
@@ -92,13 +86,6 @@ public class App {
         }
     }
 
-    private static List<Person> getAllPersons() {
-        CriteriaBuilder builder = session.getCriteriaBuilder();
-        CriteriaQuery<Person> query = builder.createQuery(Person.class);
-        query.from(Person.class);
-        return session.createQuery(query).getResultList();
-    }
-
     private static void generateGarages() {
 
         String[] addresses = {"1 1st st, New York, NY", "5 5th st, New York, NY"};
@@ -109,45 +96,36 @@ public class App {
         }
     }
 
-    private static List<Garage> getAllGarages() {
+    private static void generateImages() {
+        for (int i = 0; i < NUM_OF_IMAGES; i++)
+            session.save(new Image());
+    }
+
+    private static <T> List<T> getAllOfType(Class<T> objectType) {
         CriteriaBuilder builder = session.getCriteriaBuilder();
-        CriteriaQuery<Garage> query = builder.createQuery(Garage.class);
-        query.from(Garage.class);
+        CriteriaQuery<T> query = builder.createQuery(objectType);
+        query.from(objectType);
         return session.createQuery(query).getResultList();
     }
 
-    private static List<Car> getAllCars() {
-        CriteriaBuilder builder = session.getCriteriaBuilder();
-        CriteriaQuery<Car> query = builder.createQuery(Car.class);
-        query.from(Car.class);
-        return session.createQuery(query).getResultList();
+    private static void printAllGarages() {
+        List<Garage> garages = getAllOfType(Garage.class);
+        for (Garage garage : garages)
+            System.out.println(garage);
     }
 
     private static void printAllCars() {
-        List<Car> cars = getAllCars();
+        List<Car> cars = getAllOfType(Car.class);
         for (Car car : cars)
             System.out.println(car);
     }
 
-    private static void generateImages() {
-        for (int i = 0; i < NUM_OF_IMAGES; i++)
-        {
-            session.save(new Image());
-        }
-    }
-    private static List<Image> getAllImages() {
-        CriteriaBuilder builder = session.getCriteriaBuilder();
-        CriteriaQuery<Image> query = builder.createQuery(Image.class);
-        query.from(Image.class);
-        return session.createQuery(query).getResultList();
-    }
-
     private static void connectEntities() {
 
-        List<Person> persons = getAllPersons();
-        List<Car> cars = getAllCars();
-        List<Garage> garages = getAllGarages();
-        List<Image> images = getAllImages();
+        List<Person> persons = getAllOfType(Person.class);
+        List<Car> cars = getAllOfType(Car.class);
+        List<Garage> garages = getAllOfType(Garage.class);
+        List<Image> images = getAllOfType(Image.class);
 
         // connect cars with owners & cars with garages
         for (int i = 0; i < cars.size(); i++)
