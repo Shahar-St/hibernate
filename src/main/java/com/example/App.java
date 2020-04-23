@@ -33,8 +33,8 @@ public class App {
             generateGarages();
             generateImages();
             connectEntities();
-            printAllGarages();
-            printAllCars();
+            printAllOfType(Garage.class);
+            printAllOfType(Car.class);
         }
         catch (Exception exception)
         {
@@ -108,16 +108,10 @@ public class App {
         return session.createQuery(query).getResultList();
     }
 
-    private static void printAllGarages() {
-        List<Garage> garages = getAllOfType(Garage.class);
-        for (Garage garage : garages)
-            System.out.println(garage);
-    }
-
-    private static void printAllCars() {
-        List<Car> cars = getAllOfType(Car.class);
-        for (Car car : cars)
-            System.out.println(car);
+    private static <T> void printAllOfType(Class<T> objectType){
+        List<T> tList = getAllOfType(objectType);
+        for (T object : tList)
+            System.out.println(object);
     }
 
     private static void connectEntities() {
