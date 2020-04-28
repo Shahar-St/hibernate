@@ -16,9 +16,9 @@ import org.hibernate.service.ServiceRegistry;
 
 public class App {
 
-    private static final int NUM_OF_PERSONS = 5;
+    private static final int NUM_OF_PERSONS = 15;
     private static final int NUM_OF_CARS = 5;
-    private static final int NUM_OF_GARAGES = 2;
+    private static final int NUM_OF_GARAGES = 10;
     private static final int NUM_OF_IMAGES = 5;
     private static Session session;
 
@@ -39,9 +39,8 @@ public class App {
         catch (Exception exception)
         {
             if (session != null)
-            {
                 session.getTransaction().rollback();
-            }
+
             System.err.println("An error occurred, changes have been rolled back.");
             exception.printStackTrace();
         } finally
@@ -80,8 +79,8 @@ public class App {
         String[] lastNames = {"Hemmo", "Bilzerian", "Snow", "Harrari", "Medina"};
         for (int i = 0; i < NUM_OF_PERSONS; i++)
         {
-            Person person = new Person(firstNames[i], lastNames[i], random.nextInt(99999),
-                    firstNames[i] + lastNames[i] + "@fake.com");
+            Person person = new Person(firstNames[i % firstNames.length], lastNames[i % lastNames.length], random.nextInt(99999),
+                    firstNames[i % firstNames.length] + lastNames[i % lastNames.length] + "@fake.com");
             session.save(person);
         }
     }
@@ -91,7 +90,7 @@ public class App {
         String[] addresses = {"1 1st st, New York, NY", "5 5th st, New York, NY"};
         for (int i = 0; i < NUM_OF_GARAGES; i++)
         {
-            Garage garage = new Garage(addresses[i]);
+            Garage garage = new Garage(addresses[i % addresses.length]);
             session.save(garage);
         }
     }
@@ -108,7 +107,7 @@ public class App {
         return session.createQuery(query).getResultList();
     }
 
-    private static <T> void printAllOfType(Class<T> objectType){
+    private static <T> void printAllOfType(Class<T> objectType) {
         List<T> tList = getAllOfType(objectType);
         for (T object : tList)
             System.out.println(object);
@@ -128,9 +127,6 @@ public class App {
             cars.get(i).addGarage(garages.get(i % garages.size()));
             cars.get(i).setImage(images.get(i % images.size()));
             session.update(cars.get(i));
-            session.update(persons.get(i % persons.size()));
-            session.update(garages.get(i % garages.size()));
-            session.update(images.get(i % images.size()));
         }
 
         // connect persons with garages
@@ -138,10 +134,7 @@ public class App {
         {
             persons.get(i).addGarage(garages.get(i % garages.size()));
             session.update(persons.get(i));
-            session.update(garages.get(i % garages.size()));
         }
-
     }
-
 
 }

@@ -13,11 +13,18 @@ public class Car {
     private String licensePlate;
     private double price;
     private int year;
-    @ManyToOne
+
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "owner_id")
     private Person owner;
     @OneToOne
     private Image image;
-    @ManyToMany
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinTable(
+            name = "car_garage",
+            joinColumns = @JoinColumn(name = "car_id"),
+            inverseJoinColumns = @JoinColumn(name = "garage_id")
+    )
     private final List<Garage> garageList;
 
     //GROUP C'tors

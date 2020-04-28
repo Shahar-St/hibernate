@@ -12,11 +12,23 @@ public class Person {
     private int id;
     private int password;
     private String firstName, lastName, emailAddress;
-    @OneToMany
-    private final List<Car> carList;
-    @ManyToMany
-    private final List<Garage> garageList;
 
+    @OneToMany(
+            cascade = CascadeType.ALL
+            , fetch = FetchType.LAZY
+            , mappedBy = "owner"
+    )
+    private final List<Car> carList;
+
+    @ManyToMany(
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE}
+    )
+    @JoinTable(
+            name = "person_garage",
+            joinColumns = @JoinColumn(name = "person_id"),
+            inverseJoinColumns = @JoinColumn(name = "garage_id")
+    )
+    private final List<Garage> garageList;
 
     //GROUP C'tors
     public Person(String firstName, String lastName, int password, String emailAddress) {
@@ -26,7 +38,7 @@ public class Person {
         this.password = password;
         this.emailAddress = emailAddress;
     }
-    public Person(){
+    public Person() {
         this.carList = new ArrayList<>();
         this.garageList = new ArrayList<>();
     }
@@ -55,6 +67,10 @@ public class Person {
     }
 
     //GROUP setters and getters
+
+    public void setId(int id) {
+        this.id = id;
+    }
     public int getId() {
         return id;
     }

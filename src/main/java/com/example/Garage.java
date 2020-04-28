@@ -11,9 +11,15 @@ public class Garage {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String address;
-    @ManyToMany
+    @ManyToMany(
+            mappedBy = "garageList",
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE}
+    )
     private final List<Person> owners;
-    @ManyToMany
+    @ManyToMany(
+            mappedBy = "garageList",
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE}
+    )
     private final List<Car> carList;
 
     //GROUP C'tors

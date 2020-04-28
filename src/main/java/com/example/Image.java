@@ -10,7 +10,6 @@ public class Image {
     private int id;
     @OneToOne
     private Car car;
-    //(mappedBy = "car")
 
     //GROUP setters and getters
     public Car getCar() {
