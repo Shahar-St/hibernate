@@ -5,22 +5,25 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
+@Table(name = "garages")
 public class Garage {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String address;
+
     @ManyToMany(
             mappedBy = "garageList",
             cascade = {CascadeType.PERSIST, CascadeType.MERGE}
     )
-    private final List<Person> owners;
+    private List<Person> owners;
+
     @ManyToMany(
             mappedBy = "garageList",
             cascade = {CascadeType.PERSIST, CascadeType.MERGE}
     )
-    private final List<Car> carList;
+    private List<Car> carList;
 
     //GROUP C'tors
     public Garage(String address) {
@@ -37,19 +40,19 @@ public class Garage {
     public void addOwner(Person person) {
 
         if (!owners.contains(person))
-        {
             owners.add(person);
+
+        if (!person.getGarageList().contains(this))
             person.addGarage(this);
-        }
     }
 
     public void addCar(Car car) {
 
         if (!carList.contains(car))
-        {
             carList.add(car);
-            car.addGarage(this);
-        }
+
+        if (!car.getGarageList().contains(this))
+            car.getGarageList().add(this);
     }
 
     //GROUP setters and getters
@@ -62,6 +65,20 @@ public class Garage {
     }
     public String getAddress() {
         return address;
+    }
+
+    public List<Person> getOwners() {
+        return owners;
+    }
+    public void setOwners(List<Person> owners) {
+        this.owners = owners;
+    }
+
+    public List<Car> getCarList() {
+        return carList;
+    }
+    public void setCarList(List<Car> carList) {
+        this.carList = carList;
     }
 
     @Override

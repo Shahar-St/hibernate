@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
+@Table(name = "cars")
 public class Car {
 
     @Id
@@ -14,18 +15,20 @@ public class Car {
     private double price;
     private int year;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "owner_id")
     private Person owner;
-    @OneToOne
+
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Image image;
+
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(
-            name = "car_garage",
+            name = "cars_garages",
             joinColumns = @JoinColumn(name = "car_id"),
             inverseJoinColumns = @JoinColumn(name = "garage_id")
     )
-    private final List<Garage> garageList;
+    private List<Garage> garageList;
 
     //GROUP C'tors
     public Car(String licensePlate, double price, int year) {
@@ -34,17 +37,17 @@ public class Car {
         this.price = price;
         this.year = year;
     }
-    public Car(){
+    public Car() {
         garageList = new ArrayList<>();
     }
 
     //GROUP adders
     public void addGarage(Garage garage) {
         if (!garageList.contains(garage))
-        {
             garageList.add(garage);
-            garage.addCar(this);
-        }
+
+        if (!garage.getCarList().contains(this))
+            garage.getCarList().add(this);
     }
 
     //GROUP setters and getters
@@ -77,11 +80,10 @@ public class Car {
         return image;
     }
     public void setImage(Image image) {
-        if (this.image != image)
-        {
-            this.image = image;
+        this.image = image;
+
+        if (image.getCar() != this)
             image.setCar(this);
-        }
     }
 
     public Person getOwner() {
@@ -89,13 +91,16 @@ public class Car {
     }
     public void setOwner(Person owner) {
 
-        if (this.owner != owner)
-        {
-            if (this.owner != null)
-                this.owner.removeCar(this);
-            this.owner = owner;
-            owner.addCar(this);
-        }
+        this.owner = owner;
+        if (!owner.getCarList().contains(this))
+            owner.getCarList().add(this);
+    }
+
+    public List<Garage> getGarageList() {
+        return garageList;
+    }
+    public void setGarageList(List<Garage> garageList) {
+        this.garageList = garageList;
     }
 
     @Override

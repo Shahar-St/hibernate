@@ -5,33 +5,31 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
+@Table(name = "persons")
 public class Person {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    private int password;
-    private String firstName, lastName, emailAddress;
+    private String firstName, lastName, emailAddress, password;
 
     @OneToMany(
             cascade = CascadeType.ALL
             , fetch = FetchType.LAZY
             , mappedBy = "owner"
     )
-    private final List<Car> carList;
+    private List<Car> carList;
 
-    @ManyToMany(
-            cascade = {CascadeType.PERSIST, CascadeType.MERGE}
-    )
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(
-            name = "person_garage",
+            name = "persons_garages",
             joinColumns = @JoinColumn(name = "person_id"),
             inverseJoinColumns = @JoinColumn(name = "garage_id")
     )
-    private final List<Garage> garageList;
+    private List<Garage> garageList;
 
     //GROUP C'tors
-    public Person(String firstName, String lastName, int password, String emailAddress) {
+    public Person(String firstName, String lastName, String password, String emailAddress) {
         this();
         this.firstName = firstName;
         this.lastName = lastName;
@@ -56,10 +54,10 @@ public class Person {
     public void addGarage(Garage garage) {
 
         if (!garageList.contains(garage))
-        {
             garageList.add(garage);
-            garage.addOwner(this);
-        }
+
+        if (!garage.getOwners().contains(this))
+            garage.getOwners().add(this);
     }
 
     public void removeCar(Car car) {
@@ -67,10 +65,6 @@ public class Person {
     }
 
     //GROUP setters and getters
-
-    public void setId(int id) {
-        this.id = id;
-    }
     public int getId() {
         return id;
     }
@@ -89,10 +83,10 @@ public class Person {
         this.lastName = lastName;
     }
 
-    public int getPassword() {
+    public String getPassword() {
         return password;
     }
-    public void setPassword(int password) {
+    public void setPassword(String password) {
         this.password = password;
     }
 
@@ -103,4 +97,17 @@ public class Person {
         this.emailAddress = emailAddress;
     }
 
+    public List<Car> getCarList() {
+        return carList;
+    }
+    public void setCarList(List<Car> carList) {
+        this.carList = carList;
+    }
+
+    public List<Garage> getGarageList() {
+        return garageList;
+    }
+    public void setGarageList(List<Garage> garageList) {
+        this.garageList = garageList;
+    }
 }

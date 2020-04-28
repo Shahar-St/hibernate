@@ -33,6 +33,9 @@ public class App {
             generateGarages();
             generateImages();
             connectEntities();
+
+            session.getTransaction().commit();
+
             printAllOfType(Garage.class);
             printAllOfType(Car.class);
         }
@@ -47,6 +50,7 @@ public class App {
         {
             assert session != null;
             session.close();
+            session.getSessionFactory().close();
         }
     }
 
@@ -67,9 +71,11 @@ public class App {
         Random random = new Random();
         for (int i = 0; i < NUM_OF_CARS; i++)
         {
-            Car car = new Car("MOO-" + random.nextInt(999999), 100000, 2000 + random.nextInt(19));
+            Car car = new Car("MOO-" + random.nextInt(999999), 100000,
+                    2000 + random.nextInt(19));
             session.save(car);
         }
+        session.flush();
     }
 
     private static void generatePersons() {
@@ -79,10 +85,12 @@ public class App {
         String[] lastNames = {"Hemmo", "Bilzerian", "Snow", "Harrari", "Medina"};
         for (int i = 0; i < NUM_OF_PERSONS; i++)
         {
-            Person person = new Person(firstNames[i % firstNames.length], lastNames[i % lastNames.length], random.nextInt(99999),
+            Person person = new Person(firstNames[i % firstNames.length], lastNames[i % lastNames.length],
+                    String.valueOf(random.nextInt(99999)),
                     firstNames[i % firstNames.length] + lastNames[i % lastNames.length] + "@fake.com");
             session.save(person);
         }
+        session.flush();
     }
 
     private static void generateGarages() {
@@ -93,11 +101,13 @@ public class App {
             Garage garage = new Garage(addresses[i % addresses.length]);
             session.save(garage);
         }
+        session.flush();
     }
 
     private static void generateImages() {
         for (int i = 0; i < NUM_OF_IMAGES; i++)
             session.save(new Image());
+        session.flush();
     }
 
     private static <T> List<T> getAllOfType(Class<T> objectType) {
@@ -128,6 +138,7 @@ public class App {
             cars.get(i).setImage(images.get(i % images.size()));
             session.update(cars.get(i));
         }
+        session.flush();
 
         // connect persons with garages
         for (int i = 0; i < persons.size(); i++)
@@ -135,6 +146,7 @@ public class App {
             persons.get(i).addGarage(garages.get(i % garages.size()));
             session.update(persons.get(i));
         }
+        session.flush();
     }
 
 }
