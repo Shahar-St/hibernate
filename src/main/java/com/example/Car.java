@@ -1,5 +1,8 @@
 package com.example;
 
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,14 +18,17 @@ public class Car {
     private double price;
     private int year;
 
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @Cascade(CascadeType.SAVE_UPDATE)
     @JoinColumn(name = "owner_id")
     private Person owner;
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
+    @Cascade(CascadeType.ALL)
     private Image image;
 
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToMany
+    @Cascade({CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(
             name = "cars_garages",
             joinColumns = @JoinColumn(name = "car_id"),
@@ -92,7 +98,7 @@ public class Car {
     public void setOwner(Person owner) {
 
         this.owner = owner;
-        if (!owner.getCarList().contains(this))
+        if (owner != null && !owner.getCarList().contains(this))
             owner.getCarList().add(this);
     }
 

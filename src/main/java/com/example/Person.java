@@ -1,5 +1,8 @@
 package com.example;
 
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,14 +16,12 @@ public class Person {
     private int id;
     private String firstName, lastName, emailAddress, password;
 
-    @OneToMany(
-            cascade = CascadeType.ALL
-            , fetch = FetchType.LAZY
-            , mappedBy = "owner"
-    )
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "owner")
+    @Cascade({CascadeType.SAVE_UPDATE, CascadeType.DETACH})
     private List<Car> carList;
 
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToMany
+    @Cascade({CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(
             name = "persons_garages",
             joinColumns = @JoinColumn(name = "person_id"),

@@ -1,5 +1,8 @@
 package com.example;
 
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,16 +16,12 @@ public class Garage {
     private int id;
     private String address;
 
-    @ManyToMany(
-            mappedBy = "garageList",
-            cascade = {CascadeType.PERSIST, CascadeType.MERGE}
-    )
+    @ManyToMany(mappedBy = "garageList")
+    @Cascade({CascadeType.PERSIST, CascadeType.MERGE})
     private List<Person> owners;
 
-    @ManyToMany(
-            mappedBy = "garageList",
-            cascade = {CascadeType.PERSIST, CascadeType.MERGE}
-    )
+    @ManyToMany(mappedBy = "garageList")
+    @Cascade({CascadeType.PERSIST, CascadeType.MERGE})
     private List<Car> carList;
 
     //GROUP C'tors

@@ -16,9 +16,9 @@ import org.hibernate.service.ServiceRegistry;
 
 public class App {
 
-    private static final int NUM_OF_PERSONS = 15;
+    private static final int NUM_OF_PERSONS = 5;
     private static final int NUM_OF_CARS = 5;
-    private static final int NUM_OF_GARAGES = 10;
+    private static final int NUM_OF_GARAGES = 2;
     private static final int NUM_OF_IMAGES = 5;
     private static Session session;
 
@@ -38,6 +38,8 @@ public class App {
 
             printAllOfType(Garage.class);
             printAllOfType(Car.class);
+
+            session.clear();
         }
         catch (Exception exception)
         {
