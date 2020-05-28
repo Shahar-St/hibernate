@@ -17,7 +17,7 @@ public class Person {
     private String firstName, lastName, emailAddress, password;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "owner")
-    @Cascade({CascadeType.SAVE_UPDATE, CascadeType.DETACH})
+    @Cascade(CascadeType.SAVE_UPDATE)
     private List<Car> carList;
 
     @ManyToMany
@@ -59,10 +59,6 @@ public class Person {
 
         if (!garage.getOwners().contains(this))
             garage.getOwners().add(this);
-    }
-
-    public void removeCar(Car car) {
-        carList.remove(car);
     }
 
     //GROUP setters and getters

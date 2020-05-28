@@ -28,7 +28,7 @@ public class Car {
     private Image image;
 
     @ManyToMany
-    @Cascade({CascadeType.PERSIST, CascadeType.MERGE})
+    @Cascade({CascadeType.SAVE_UPDATE, CascadeType.MERGE})
     @JoinTable(
             name = "cars_garages",
             joinColumns = @JoinColumn(name = "car_id"),
